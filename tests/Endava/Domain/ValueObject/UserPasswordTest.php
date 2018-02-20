@@ -8,18 +8,12 @@
 
 namespace TestEndava\Domain\ValueObject;
 
-use Endava\Domain\Model\User;
 use Endava\Domain\ValueObject\UserPassword;
-use PHPUnit\Framework\TestCase;
+use TestEndava\AbstractTestCase;
 use TestEndava\Infrastructure\PasswordEncodingStrategies\MockPasswordEncodingStrategy;
 
-class UserPasswordTest extends TestCase
+class UserPasswordTest extends AbstractTestCase
 {
-    const USER_PASSWORD = 'myPassword';
-    const SECOND_PASSWORD = 'mysECONDPassword';
-    const EMPTY_PASSWORD = '';
-    const SMALL_PASSWORD = 'test';
-
     public function test__construct()
     {
         $userPassword = new UserPassword(self::USER_PASSWORD, new MockPasswordEncodingStrategy());
@@ -29,14 +23,13 @@ class UserPasswordTest extends TestCase
     public function testUpdatePassword()
     {
         $userPassword = new UserPassword(self::USER_PASSWORD, new MockPasswordEncodingStrategy());
-        $newPassword = $userPassword->updatePassword(self::SECOND_PASSWORD);
-
-        $this->assertTrue($newPassword->equals(new UserPassword(self::SECOND_PASSWORD, new MockPasswordEncodingStrategy())));
+        $newPassword  = $userPassword->updatePassword(self::SECOND_USER_PASSWORD);
+        $this->assertTrue($newPassword->equals(new UserPassword(self::SECOND_USER_PASSWORD, new MockPasswordEncodingStrategy())));
     }
 
     public function testGetUserPassword()
     {
-        $userPassword = new UserPassword(self::USER_PASSWORD, new MockPasswordEncodingStrategy());
+        $userPassword       = new UserPassword(self::USER_PASSWORD, new MockPasswordEncodingStrategy());
         $secondUserPassword = new UserPassword(self::USER_PASSWORD, new MockPasswordEncodingStrategy());
         $this->assertNotEmpty($userPassword->getUserPassword());
         $this->assertEquals($userPassword->getUserPassword(), $secondUserPassword->getUserPassword());
@@ -45,21 +38,23 @@ class UserPasswordTest extends TestCase
     public function testEquals()
     {
         $userPassword = new UserPassword(self::USER_PASSWORD, new MockPasswordEncodingStrategy());
-        $newPassword = new UserPassword(self::USER_PASSWORD, new MockPasswordEncodingStrategy());
+        $newPassword  = new UserPassword(self::USER_PASSWORD, new MockPasswordEncodingStrategy());
         $this->assertTrue($userPassword->equals($newPassword));
     }
 
     /**
      * @expectedException  \InvalidArgumentException
      */
-    public function testAssertUserPasswordNotEmpty(){
+    public function testAssertUserPasswordNotEmpty()
+    {
         new UserPassword(self::EMPTY_PASSWORD, new MockPasswordEncodingStrategy());
     }
 
     /**
      * @expectedException  \InvalidArgumentException
      */
-    public function testAssertUserPasswordIsMinimumEightChars(){
+    public function testAssertUserPasswordIsMinimumEightChars()
+    {
         new UserPassword(self::SMALL_PASSWORD, new MockPasswordEncodingStrategy());
     }
 }

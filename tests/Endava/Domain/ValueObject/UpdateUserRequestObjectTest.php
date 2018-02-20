@@ -9,92 +9,44 @@
 namespace TestEndava\Domain\ValueObject;
 
 use Endava\Domain\ValueObject\UpdateUserRequestObject;
-use PHPUnit\Framework\TestCase;
+use TestEndava\AbstractTestCase;
 use TestEndava\Infrastructure\PasswordEncodingStrategies\MockPasswordEncodingStrategy;
 
-class UpdateUserRequestObjectTest extends TestCase
+class UpdateUserRequestObjectTest extends AbstractTestCase
 {
-
-    const USER_ID = 'SAMPLE';
-    const USER_NAME = 'Andrei';
-    const USER_EMAIL = 'andrei.isacescu@endava.com';
-    const USER_PASSWORD = 'myPassword';
-
     public function test__construct()
     {
-        $updateUserRequestObject = new UpdateUserRequestObject(
-            self::USER_ID,
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new MockPasswordEncodingStrategy()
-        );
-
+        $updateUserRequestObject = $this->getUpdateUserRequestObject();
         $this->assertInstanceOf(UpdateUserRequestObject::class, $updateUserRequestObject);
     }
 
     public function testGetUserName()
     {
-        $updateUserRequestObject = new UpdateUserRequestObject(
-            self::USER_ID,
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new MockPasswordEncodingStrategy()
-        );
-
-        $this->assertEquals($updateUserRequestObject->getUserName(), self::USER_NAME);
+        $updateUserRequestObject = $this->getUpdateUserRequestObject();
+        $this->assertEquals($updateUserRequestObject->getUserName(), self::SECOND_USER_NAME);
     }
 
     public function testGetUserEmail()
     {
-        $updateUserRequestObject = new UpdateUserRequestObject(
-            self::USER_ID,
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new MockPasswordEncodingStrategy()
-        );
-
-        $this->assertEquals($updateUserRequestObject->getUserEmail(), self::USER_EMAIL);
+        $updateUserRequestObject = $this->getUpdateUserRequestObject();
+        $this->assertEquals($updateUserRequestObject->getUserEmail(), self::SECOND_USER_EMAIL);
     }
 
     public function testGetUserPlainPassword()
     {
-        $updateUserRequestObject = new UpdateUserRequestObject(
-            self::USER_ID,
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new MockPasswordEncodingStrategy()
-        );
-
-        $this->assertEquals($updateUserRequestObject->getUserPlainPassword(), self::USER_PASSWORD);
+        $updateUserRequestObject = $this->getUpdateUserRequestObject();
+        $this->assertEquals($updateUserRequestObject->getUserPlainPassword(), self::SECOND_USER_PASSWORD);
     }
 
     public function testGetEncodingStrategy()
     {
-        $updateUserRequestObject = new UpdateUserRequestObject(
-            self::USER_ID,
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new MockPasswordEncodingStrategy()
-        );
-
+        $updateUserRequestObject = $this->getUpdateUserRequestObject();
         $this->assertInstanceOf(MockPasswordEncodingStrategy::class, $updateUserRequestObject->getEncodingStrategy());
     }
 
     public function testGetUserId()
     {
-        $updateUserRequestObject = new UpdateUserRequestObject(
-            self::USER_ID,
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new MockPasswordEncodingStrategy()
-        );
-
+        $updateUserRequestObject = $this->getUpdateUserRequestObject();
         $this->assertEquals($updateUserRequestObject->getUserId(), self::USER_ID);
     }
 }

@@ -10,6 +10,7 @@ namespace Endava\Domain\Model;
 
 
 use Endava\Domain\ValueObject\UserId;
+use Endava\Infrastructure\Persistence\Exceptions\UserNotFoundException;
 
 /**
  *
@@ -41,6 +42,7 @@ interface UserRepositoryInterface
     /**
      * @param UserId $userId
      * @return User
+     * @throws UserNotFoundException
      */
     public function userOfId(UserId $userId);
 

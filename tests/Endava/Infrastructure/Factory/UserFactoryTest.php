@@ -9,59 +9,34 @@
 namespace TestEndava\Infrastructure\Factory;
 
 use Endava\Domain\Model\User;
-use Endava\Domain\ValueObject\CreateUserRequestObject;
-use Endava\Domain\ValueObject\UpdateUserRequestObject;
 use Endava\Domain\ValueObject\UserName;
 use Endava\Infrastructure\Factory\UserFactory;
-use PHPUnit\Framework\TestCase;
-use TestEndava\Infrastructure\PasswordEncodingStrategies\MockPasswordEncodingStrategy;
+use TestEndava\AbstractTestCase;
 
-class UserFactoryTest extends TestCase
+class UserFactoryTest extends AbstractTestCase
 {
-    const USER_ID = 'SAMPLE';
-    const USER_NAME = 'Andrei';
-    const USER_EMAIL = 'andrei.isacescu@endava.com';
-    const USER_PASSWORD = 'myPassword';
 
-    const SECOND_USER_NAME = 'Mihai';
+    private $userFactory;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->userFactory = new UserFactory();
+    }
 
     public function testCreateFromCreateRequest()
     {
-        $createUserRequestObject = new CreateUserRequestObject(
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new MockPasswordEncodingStrategy()
-        );
-
-        $userFactory = new UserFactory();
-        $user = $userFactory->createFromCreateRequest($createUserRequestObject);
-
+        $createUserRequestObject = $this->getCreateUserRequestObject();
+        $user                    = $this->userFactory->createFromCreateRequest($createUserRequestObject);
         $this->assertInstanceOf(User::class, $user);
     }
 
     public function testCreateFromUpdateRequest()
     {
-        $createUserRequestObject = new CreateUserRequestObject(
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new MockPasswordEncodingStrategy()
-        );
-
-        $userFactory = new UserFactory();
-        $user = $userFactory->createFromCreateRequest($createUserRequestObject);
-
-        $updateUserRequestObject = new UpdateUserRequestObject(
-            $user->getUserId(),
-            self::SECOND_USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new MockPasswordEncodingStrategy()
-        );
-
-        $userUpdated = $userFactory->createFromUpdateRequest($updateUserRequestObject);
-
+        $createUserRequestObject = $this->getCreateUserRequestObject();
+        $user                    = $this->userFactory->createFromCreateRequest($createUserRequestObject);
+        $updateUserRequestObject = $this->getUpdateUserRequestObject($user->getUserId()->getUserId());
+        $userUpdated             = $this->userFactory->createFromUpdateRequest($updateUserRequestObject);
         $this->assertTrue($userUpdated->getUserName()->equals(new UserName(self::SECOND_USER_NAME)));
     }
 }

@@ -9,88 +9,63 @@
 namespace TestEndava\Application\Controller;
 
 use Endava\Application\Controller\UserController;
-use Endava\Application\Request\CreateUserRequest;
-use Endava\Application\Request\UpdateUserRequest;
 use Endava\Domain\Model\User;
+use Endava\Domain\Model\UserRepositoryInterface;
 use Endava\Domain\Service\UserService;
 use Endava\Domain\Service\UserServiceInterface;
 use Endava\Domain\ValueObject\UserId;
 use Endava\Domain\ValueObject\UserName;
 use Endava\Infrastructure\Factory\UserFactory;
-use Endava\Infrastructure\PasswordEncodingStrategies\Md5PasswordEncodingStrategy;
 use Endava\Infrastructure\Persistence\Exceptions\UserNotFoundException;
 use Endava\Infrastructure\Persistence\InMemory\InMemoryUserRepository;
-use PHPUnit\Framework\TestCase;
-use TestEndava\Domain\Service\MockUserService;
+use TestEndava\AbstractTestCase;
 
-class UserControllerTest extends TestCase
+class UserControllerTest extends AbstractTestCase
 {
+    /** @var UserRepositoryInterface $userRepository */
+    private $userRepository;
+    /** @var UserService $userService */
+    private $userService;
+    /** @var UserController $userController */
+    private $userController;
 
-    const USER_ID = 'SAMPLE';
-    const USER_NAME = 'Andrei';
-    const USER_EMAIL = 'andrei.isacescu@endava.com';
-    const USER_PASSWORD = 'myPassword';
-
-    const SECOND_USER_NAME = 'Mihai';
+    public function setUp()
+    {
+        parent::setUp();
+        $this->userRepository = new InMemoryUserRepository();
+        $this->userService    = new UserService($this->userRepository, new UserFactory());
+        $this->userController = new UserController($this->userService);
+    }
 
     public function test__construct()
     {
-        $mockUserService = new MockUserService();
-        $userController  = new UserController($mockUserService);
-        $this->assertInstanceOf(UserServiceInterface::class, $userController->getService());
+        $this->assertInstanceOf(UserServiceInterface::class, $this->userController->getService());
     }
 
     public function testPostUser()
     {
-        $userRepository = new InMemoryUserRepository();
-        $userService    = new UserService($userRepository, new UserFactory());
-        $userController = new UserController($userService);
-        $userCreateRequest    = new CreateUserRequest(
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new Md5PasswordEncodingStrategy()
-        );
+        $userCreateRequest = $this->getCreateUserRequest();
+        $userId            = $this->userController->postUser($userCreateRequest);
 
-        $userId = $userController->postUser($userCreateRequest);
         try {
-            $userModel = $userRepository->userOfId(UserId::fromString($userId));
+            $userModel = $this->userRepository->userOfId(UserId::fromString($userId));
             $this->assertInstanceOf(User::class, $userModel);
         } catch (UserNotFoundException $exception) {
             return false;
         }
-
     }
 
     public function testPutUser()
     {
-        $userRepository = new InMemoryUserRepository();
-        $userService    = new UserService($userRepository, new UserFactory());
-        $userController = new UserController($userService);
-        $userCreateRequest    = new CreateUserRequest(
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new Md5PasswordEncodingStrategy()
-        );
+        $userCreateRequest = $this->getCreateUserRequest();
+        $userId            = $this->userController->postUser($userCreateRequest);
+        $userUpdateRequest = $this->getUpdateUserRequest($userId);
+        $this->userController->putUser($userUpdateRequest);
 
-        $userId = $userController->postUser($userCreateRequest);
-
-        $userUpdateRequest = new UpdateUserRequest(
-            $userId,
-            self::SECOND_USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new Md5PasswordEncodingStrategy()
-        );
-
-        $userController->putUser($userUpdateRequest);
         try {
             /** @var User $userModel */
-            $userModel = $userRepository->userOfId(UserId::fromString($userId));
-
+            $userModel = $this->userRepository->userOfId(UserId::fromString($userId));
             $this->assertTrue($userModel->getUserName()->equals(new UserName(self::SECOND_USER_NAME)));
-
         } catch (UserNotFoundException $exception) {
             return false;
         }
@@ -98,49 +73,26 @@ class UserControllerTest extends TestCase
 
     /**
      * @expectedException Endava\Infrastructure\Persistence\Exceptions\UserNotFoundException
+     * @throws UserNotFoundException
      */
     public function testDeleteUser()
     {
-
-        $userRepository = new InMemoryUserRepository();
-        $userService    = new UserService($userRepository, new UserFactory());
-        $userController = new UserController($userService);
-        $userCreateRequest    = new CreateUserRequest(
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new Md5PasswordEncodingStrategy()
-        );
-
-        $userId = $userController->postUser($userCreateRequest);
-
-        $userController->deleteUser($userId);
-
-        $userRepository->userOfId(UserId::fromString($userId));
+        $userCreateRequest = $this->getCreateUserRequest();
+        $userId            = $this->userController->postUser($userCreateRequest);
+        $this->userController->deleteUser($userId);
+        $this->userRepository->userOfId(UserId::fromString($userId));
     }
 
     public function testGetUser()
     {
-        $userRepository = new InMemoryUserRepository();
-        $userService    = new UserService($userRepository, new UserFactory());
-        $userController = new UserController($userService);
-        $userCreateRequest    = new CreateUserRequest(
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new Md5PasswordEncodingStrategy()
-        );
-
-        $userId = $userController->postUser($userCreateRequest);
-
-        $userModel = $userController->getUser($userId);
+        $userCreateRequest = $this->getCreateUserRequest();
+        $userId            = $this->userController->postUser($userCreateRequest);
+        $userModel         = $this->userController->getUser($userId);
         $this->assertInstanceOf(User::class, $userModel);
     }
 
     public function testGetService()
     {
-        $mockUserService = new MockUserService();
-        $userController  = new UserController($mockUserService);
-        $this->assertInstanceOf(MockUserService::class, $userController->getService());
+        $this->assertInstanceOf(UserService::class, $this->userController->getService());
     }
 }

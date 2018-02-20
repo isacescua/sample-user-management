@@ -69,6 +69,7 @@ class UserService implements UserServiceInterface
 
     /**
      * @param string $userId
+     * @throws \Endava\Infrastructure\Persistence\Exceptions\UserNotFoundException
      */
     public function delete($userId)
     {
@@ -79,6 +80,7 @@ class UserService implements UserServiceInterface
     /**
      * @param string $userId
      * @return \Endava\Domain\Model\User
+     * @throws \Endava\Infrastructure\Persistence\Exceptions\UserNotFoundException
      */
     public function getUserFromId($userId)
     {

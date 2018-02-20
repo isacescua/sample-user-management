@@ -9,26 +9,20 @@
 namespace TestEndava\Domain\ValueObject;
 
 use Endava\Domain\ValueObject\UserEmail;
-use PHPUnit\Framework\TestCase;
+use TestEndava\AbstractTestCase;
 
-class UserEmailTest extends TestCase
+class UserEmailTest extends AbstractTestCase
 {
-
-    const USER_EMAIL = 'andrei.isacescu@endava.com';
-    const SECOND_USER_EMAIL = 'isacescua@endava.com';
-    const EMPTY_EMAIL = '';
-    CONST INVALID_EMAIL_ADDRESS = 'invalid';
 
     public function test__construct()
     {
         $userEmail = new UserEmail(self::USER_EMAIL);
-
         $this->assertInstanceOf(UserEmail::class, $userEmail);
     }
 
     public function testUpdateEmail()
     {
-        $userEmail = new UserEmail(self::USER_EMAIL);
+        $userEmail    = new UserEmail(self::USER_EMAIL);
         $newUserEmail = $userEmail->updateEmail(self::SECOND_USER_EMAIL);
         $this->assertTrue($newUserEmail->equals(new UserEmail(self::SECOND_USER_EMAIL)));
     }
@@ -41,7 +35,7 @@ class UserEmailTest extends TestCase
 
     public function testEquals()
     {
-        $userEmail = new UserEmail(self::USER_EMAIL);
+        $userEmail       = new UserEmail(self::USER_EMAIL);
         $secondUserEmail = new UserEmail(self::USER_EMAIL);
         $this->assertTrue($userEmail->equals($secondUserEmail));
 
@@ -50,14 +44,16 @@ class UserEmailTest extends TestCase
     /**
      * @expectedException  \InvalidArgumentException
      */
-    public function testAssertUserEmailNotEmpty(){
-        $userEmail = new UserEmail(self::EMPTY_EMAIL);
+    public function testAssertUserEmailNotEmpty()
+    {
+        new UserEmail(self::EMPTY_EMAIL);
     }
 
     /**
      * @expectedException  \InvalidArgumentException
      */
-    public function testAssertUserEmailIsValid(){
-        $userEmail = new UserEmail(self::INVALID_EMAIL_ADDRESS);
+    public function testAssertUserEmailIsValid()
+    {
+        new UserEmail(self::INVALID_EMAIL_ADDRESS);
     }
 }

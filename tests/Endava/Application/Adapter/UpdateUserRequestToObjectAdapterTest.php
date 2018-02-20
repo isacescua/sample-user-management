@@ -9,32 +9,15 @@
 namespace TestEndava\Application\Adapter;
 
 use Endava\Application\Adapter\UpdateUserRequestToObjectAdapter;
-use Endava\Application\Request\UpdateUserRequest;
 use Endava\Domain\ValueObject\UpdateUserRequestObject;
-use PHPUnit\Framework\TestCase;
-use TestEndava\Infrastructure\PasswordEncodingStrategies\MockPasswordEncodingStrategy;
+use TestEndava\AbstractTestCase;
 
-class UpdateUserRequestToObjectAdapterTest extends TestCase
+class UpdateUserRequestToObjectAdapterTest extends AbstractTestCase
 {
-
-    const USER_ID = 'SAMPLE';
-    const USER_NAME = 'Andrei';
-    const USER_EMAIL = 'andrei.isacescu@endava.com';
-    const USER_PASSWORD = 'myPassword';
-
     public function test__construct()
     {
-
-        $updateUserRequest = new UpdateUserRequest(
-            self::USER_ID,
-            self::USER_NAME,
-            self::USER_EMAIL,
-            self::USER_PASSWORD,
-            new MockPasswordEncodingStrategy()
-        );
-
-        $response = new UpdateUserRequestToObjectAdapter($updateUserRequest);
-
+        $updateUserRequest = $this->getUpdateUserRequest();
+        $response          = new UpdateUserRequestToObjectAdapter($updateUserRequest);
         $this->assertInstanceOf(UpdateUserRequestObject::class, $response);
     }
 }

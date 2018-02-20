@@ -9,13 +9,10 @@
 namespace TestEndava\Domain\ValueObject;
 
 use Endava\Domain\ValueObject\UserId;
-use PHPUnit\Framework\TestCase;
+use TestEndava\AbstractTestCase;
 
-class UserIdTest extends TestCase
+class UserIdTest extends AbstractTestCase
 {
-
-    const USER_ID = '10';
-    const EMPTY_USER_ID = '';
 
     public function test__toString()
     {
@@ -44,16 +41,16 @@ class UserIdTest extends TestCase
 
     public function testEquals()
     {
-        $userId = UserId::fromString(self::USER_ID);
+        $userId       = UserId::fromString(self::USER_ID);
         $secondUserId = UserId::fromString(self::USER_ID);
         $this->assertTrue($userId->equals($secondUserId));
-
     }
 
     /**
      * @expectedException  \InvalidArgumentException
      */
-    public function testAssertUserIdNotEmpty(){
-        $userId = UserId::fromString(self::EMPTY_USER_ID);
+    public function testAssertUserIdNotEmpty()
+    {
+        UserId::fromString(self::EMPTY_USER_ID);
     }
 }

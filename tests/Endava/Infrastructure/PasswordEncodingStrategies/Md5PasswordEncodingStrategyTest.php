@@ -9,17 +9,15 @@
 namespace TestEndava\Infrastructure\PasswordEncodingStrategies;
 
 use Endava\Infrastructure\PasswordEncodingStrategies\Md5PasswordEncodingStrategy;
-use PHPUnit\Framework\TestCase;
+use TestEndava\AbstractTestCase;
 
-class Md5PasswordEncodingStrategyTest extends TestCase
+class Md5PasswordEncodingStrategyTest extends AbstractTestCase
 {
-
-    const PASSWORD = 'test';
 
     public function testEncodePasswordAndReturnValue()
     {
-        $password = new Md5PasswordEncodingStrategy();
-        $encodedPassword = $password->encodePasswordAndReturnValue(self::PASSWORD);
-        $this->assertEquals(md5(self::PASSWORD), $encodedPassword);
+        $password        = new Md5PasswordEncodingStrategy();
+        $encodedPassword = $password->encodePasswordAndReturnValue(self::USER_PASSWORD);
+        $this->assertEquals(md5(self::USER_PASSWORD), $encodedPassword);
     }
 }

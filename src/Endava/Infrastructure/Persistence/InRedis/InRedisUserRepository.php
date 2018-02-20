@@ -52,7 +52,7 @@ class InRedisUserRepository implements UserRepositoryInterface
      */
     public function remove(User $user)
     {
-        $this->client->hdel(self::USER_HSET, (string) $user->getUserId());
+        $this->client->hdel(self::USER_HSET, $user->getUserId()->getUserId());
     }
 
     /**
